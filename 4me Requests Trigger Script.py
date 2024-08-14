@@ -185,7 +185,7 @@ spark.sql(query)
 
 # MAGIC %pip install nltk
 # MAGIC
-# MAGIC from pyspark.sql.functions import explode, split, col, lower, collect_list, concat_ws
+# MAGIC from pyspark.sql.functions import explode, split, col, lower, collect_list, concat_ws, length
 # MAGIC import nltk
 # MAGIC from nltk.corpus import wordnet as wn
 # MAGIC
@@ -213,8 +213,8 @@ spark.sql(query)
 # MAGIC words = words_df.select("word").distinct().rdd.flatMap(lambda x: x).collect()
 # MAGIC nouns = [word for word in words if is_noun(word)]
 # MAGIC
-# MAGIC # Filter the DataFrame to keep only nouns
-# MAGIC nouns_df = words_df.filter(col("word").isin(nouns))
+# MAGIC # Filter the DataFrame to keep only nouns and words longer than one character
+# MAGIC nouns_df = words_df.filter((col("word").isin(nouns)) & (length(col("word")) > 1))
 # MAGIC
 # MAGIC # Group by team and word, then count occurrences
 # MAGIC word_count_df = nouns_df.groupBy("team", "word").count()
